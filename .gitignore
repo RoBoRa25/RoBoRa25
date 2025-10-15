@@ -1,0 +1,10 @@
+.pio
+.vscode
+
+# Compiled Firmware Files (derivatives)
+*.bin
+*.hex
+*.elf
+*.map
+*.json
+

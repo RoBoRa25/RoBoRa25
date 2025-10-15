@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="light">
+
+<head>
+  <meta charset="utf-8" />
+  <!--<meta http-equiv="Cache-Control" content="no-cache, no-store">-->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>RoBoRa UI</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="/icon.png?v=1">
+  <link rel="stylesheet" href="Style.css" />
+  <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/three.min.js"></script>-->
+  <script src="three.min.js" defer></script>
+  <script src="GLTFLoader.js" defer></script>
+  <script src="Script.js" defer> </script>
+</head>
+
+<body>
+  <header>
+    <div class="logo" aria-hidden="true"></div>
+    <div class="brand">RoBoRa UI</div>
+    <div class="grow"></div>
+    <div class="status"><span class="dot" id="wsDot"></span><span id="wsLabel">Disconnesso</span></div>
+    <div class="theme-toggle" title="Tema chiaro/scuro">
+      <span>🌞</span>
+      <label class="switch">
+        <input id="themeSwitch" type="checkbox" />
+        <span class="slider"></span>
+      </label>
+      <span>🌙</span>
+    </div>
+  </header>
+  <main>
+    <section id="page-home" class="active">
+      <div class="nav-grid">
+        <button class="nav-btn" data-goto="configConnessione">⚙️ Config. Connessione →</button>
+        <button class="nav-btn" data-goto="configMotore">⚙️ Config. Motore →</button>
+        <button class="nav-btn" data-goto="configTelemetria">⚙️ Config. Telemetria →</button>
+
+        <button class="nav-btn" data-goto="model3d">🧭 Modello 3D →</button>
+        <button class="nav-btn" data-goto="display">⬆️ Display →</button>
+        <button class="nav-btn" data-goto="robot">🤖 Controllo Robot →</button>
+
+        <button class="nav-btn" data-goto="info">ℹ️ Info →</button>
+        <button class="nav-btn" data-goto="pagewebui">⚙️ Setup UI →</button>
+        <button class="nav-btn" data-goto="ota">⬆️ OTA →</button>
+      </div>
+    </section>
+
+    <section id="page-config-connessione">
+      <div class="back" data-goto="home">⟵ Torna alla Home</div>
+      <div class="card">
+        <h2>Configurazione Connessione</h2>
+        <div id="paramsContainer-connessione" class="cards" style="gap:12px"></div>
+        <div class="row" style="margin-top:12px">
+          <button class="btn read" data-section="connessione">Leggi tutti</button>
+          <button class="btn warn write" data-section="connessione">Scrivi tutti</button>
+        </div>
+      </div>
+      <div class="back" style="margin-top:10px" data-goto="home">⟵ Torna alla Home</div>
+    </section>
+
+    <section id="page-config-motore">
+      <div class="back" data-goto="home">⟵ Torna alla Home</div>
+      <div class="card">
+        <h2>Configurazione Motore</h2>
+        <div id="paramsContainer-motore" class="cards" style="gap:12px"></div>
+        <div class="row" style="margin-top:12px">
+          <button class="btn read" data-section="motore">Leggi tutti</button>
+          <button class="btn warn write" data-section="motore">Scrivi tutti</button>
+        </div>
+      </div>
+      <div class="back" style="margin-top:10px" data-goto="home">⟵ Torna alla Home</div>
+    </section>
+
+    <section id="page-config-telemetria">
+      <div class="back" data-goto="home">⟵ Torna alla Home</div>
+      <div class="card">
+        <h2>Configurazione Telemetria</h2>
+        <div id="paramsContainer-telemetria" class="cards" style="gap:12px"></div>
+        <div class="row" style="margin-top:12px">
+          <button class="btn read" data-section="telemetria">Leggi tutti</button>
+          <button class="btn warn write" data-section="telemetria">Scrivi tutti</button>
+        </div>
+      </div>
+      <div class="back" style="margin-top:10px" data-goto="home">⟵ Torna alla Home</div>
+    </section>
+
+    <section id="page-webui">
+      <div class="back" data-goto="home">⟵ Torna alla Home</div>
+      <div class="card">
+        <div class="grid-4" style="margin-top:8px">
+          <button class="btn" onclick="hidesensorCard()">Nascondi Sensori</button>
+          <button class="btn" onclick="hidefnCard()">Nascondi Funzioni</button>
+          <button class="btn" onclick="hidemodalita()">Nascondi Modalita invio</button>
+          <button class="btn warn write" onclick="ResetFabbria()">Reset Fabbrica</button>
+        </div>
+      </div>
+      <div class="back" style="margin-top:10px" data-goto="home">⟵ Torna alla Home</div>
+    </section>
+
+    <section id="page-model3d">
+      <div class="back" data-goto="home">⟵ Torna alla Home</div>
+      <div class="card">
+        <h2>Modello 3D</h2>
+        <div class="row" style="margin-bottom:10px">
+          <button id="btnReset3D" class="btn secondary" style="flex:0 0 auto">Reset orientamento</button>
+          <input type="color" id="modelColor" value="#808080" />
+        </div>
+        <div id="threeWrap" class="three-wrap" aria-label="Viewport 3D"></div>
+      </div>
+      <div class="back" style="margin-top:10px" data-goto="home">⟵ Torna alla Home</div>
+    </section>
+
+    <section id="page-display">
+      <div class="back" data-goto="home">⟵ Torna alla Home</div>
+      <div class="card">
+        <h2>Display 1bpp 128×64</h2>
+
+        <div class="row" style="margin-top:10px">
+          <input type="file" id="disp_imageInput" accept="image/*" style="flex:2 1 260px">
+          <label for="disp_invert" style="flex:0 0 auto">
+            <input type="checkbox" id="disp_invert"> Inverti colori anteprima
+          </label>
+          <button class="btn" id="disp_uploadBtn">Invia immagine</button>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <canvas id="disp_preview" width="128" height="64"
+            style="border:1px solid rgba(0,0,0,.2);background:#fff;image-rendering:pixelated"></canvas>
+        </div>
+        <hr style="margin:16px 0;opacity:.2">
+
+        <h3>Testo multi-riga</h3>
+        <div class="row" style="margin-top:10px">
+          <textarea id="disp_textarea" rows="8" placeholder="Riga 1\n Riga 2 \n Riga 3..."
+            style="width:100%;resize:vertical"></textarea>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <div class="row"><button class="btn" id="disp_sendText">Invia testo</button></div>
+        </div>
+
+        <div class="grid-3" style="margin-top:8px">
+          <div class="row">
+            <label style="flex:0 0 auto">Size</label>
+            <select id="disp_size" style="max-width:120px">
+              <option value="1">1 (8 righe, ~21 col)</option>
+              <option value="2">2 (4 righe, ~10 col)</option>
+              <option value="3">3 (2 righe, ~7 col)</option>
+              <option value="4">4 (2 righe, ~5 col)</option>
+            </select>
+          </div>
+          <div class="row">
+            <label style="flex:0 0 auto">Scroll</label>
+            <select id="disp_scroll" style="max-width:120px">
+              <option value="0">None</option>
+              <option value="1">Pages</option>
+              <option value="2">Lines</option>
+            </select>
+          </div>
+          <div class="row">
+            <label style="flex:0 0 auto">Delay (ms)</label>
+            <input type="text" id="disp_delay" value="1000" style="max-width:120px">
+          </div>
+        </div>
+
+        <div class="grid-3" style="margin-top:8px">
+          <div class="row"><label style="flex:0 0 auto"><input type="checkbox" id="disp_invertText"> Inverti</label>
+          </div>
+          <div class="row"><label style="flex:0 0 auto"><input type="checkbox" id="disp_truncate" checked>Tronca</label>
+          </div>
+          <div class="row"><label style="flex:0 0 auto"><input type="checkbox" id="disp_loop" checked> Loop</label>
+          </div>
+        </div>
+
+        <div id="disp_status" style="margin-top:10px;font-size:14px;opacity:.9"></div>
+
+      </div>
+      <div class="back" style="margin-top:10px" data-goto="home">⟵ Torna alla Home</div>
+    </section>
+
+    <section id="page-info">
+      <div class="back" data-goto="home">⟵ Torna alla Home</div>
+      <div class="card">
+        <h2>Informazioni</h2>
+        <div class="cards" id="infoContainer" style="gap:12px"></div>
+        <div class="row" style="margin-top:12px">
+          <button class="btn" id="refreshInfo">Aggiorna</button>
+        </div>
+      </div>
+      <div class="back" style="margin-top:10px" data-goto="home">⟵ Torna alla Home</div>
+    </section>
+
+    <section id="page-robot">
+      <div class="back" data-goto="home">⟵ Torna alla Home</div>
+      <div class="card" id="sensorCard" style="margin-top:12px">
+        <h2>Telemetria sensori</h2>
+        <div class="fn-sens" id="sensorGrid"></div>
+      </div>
+      <div class="card" id="fnCard" style="margin-top:12px">
+        <h2>Funzioni speciali</h2>
+        <div class="fn-grid" id="fnGrid"></div>
+      </div>
+      <div class="card" id="joyCard" style="margin-top:12px">
+        <h2>Joystick</h2>
+        <div class="row" id="modalita">
+          <label style="flex:0 0 auto">Modalità invio</label>
+          <select id="sendMode" style="max-width:260px">
+            <option value="interval">Periodico ogni 100 ms</option>
+            <option value="onchange">Su cambio di stato</option>
+          </select>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <div style="flex:1 1 220px">
+            <div class="joy-wrap">
+              <div id="joystick" class="joystick" aria-label="Joystick">
+                <div class="joy-grid"></div>
+                <div id="knob" class="knob" aria-hidden="true"></div>
+              </div>
+              <div class="joy-values"><span>X: <strong id="xVal">0</strong></span> <span>Y: <strong
+                    id="yVal">0</strong></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="back" style="margin-top:10px" data-goto="home">⟵ Torna alla Home</div>
+    </section>
+
+    <section id="page-ota">
+      <div class="back" data-goto="home">⟵ Torna alla Home</div>
+      <div class="card">
+        <h2>OTA Firmware </h2>
+        <div class="row" style="margin-top:10px">
+          <div>
+            <input id="fwFile" type="file" accept=".bin,.bin.gz" style="flex:2 1 260px" />
+          </div>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <label style="flex:0 0 auto">Dimensione</label>
+          <input id="filesize" type="text" readonly />
+          <label style="flex:0 0 auto">Metodo</label>
+          <select id="otaMethod" style="max-width:220px">
+            <option value="multipart">HTTP(multipart)</option>
+            <option value="octet">HTTP(octet-stream)</option>
+          </select>
+          <label style="flex:0 0 auto">Destinazione</label>
+          <select id="otaTarget" style="max-width:180px">
+            <option value="app">Firmware</option>
+            <option value="fs">SPIFFS/LittleFS</option>
+          </select>
+          <label style="flex:0 0 auto">FS</label>
+          <select id="fsType" style="max-width:160px">
+            <option value="spiffs">SPIFFS</option>
+            <option value="littlefs">LittleFS</option>
+          </select>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <button id="btnHash" class="btn secondary" style="flex:0 0 auto">Calcola SHA-256</button>
+          <input id="sha256" type="text" placeholder="SHA-256 (calcolato)" readonly />
+          <input id="md5" type="text" placeholder="MD5 (opzionale)" style="max-width:220px" />
+        </div>
+        <div class="row" style="margin-top:10px">
+          <div class="progress" aria-label="Progresso OTA">
+            <div class="bar" id="otaBar" style="width:0%"></div>
+          </div>
+          <div id="otaStatus" style="min-width:220px;color:var(--muted)">In attesa file…</div>
+        </div>
+        <div class="grid-3" style="margin-top:8px">
+          <button id="btnUpload" class="btn" disabled style="flex:0 0 auto">Carica</button>
+          <button id="btnAbort" class="btn warn" disabled style="flex:0 0 auto">Annulla</button>
+          <button id="btnReboot" class="btn" disabled style="flex:0 0 auto">Riavvia</button>
+        </div>
+        <h3 style="margin:16px 0 8px 0">Log OTA (tempo reale)</h3>
+        <div id="otaLog" class="logbox" aria-live="polite" aria-atomic="false"></div>
+      </div>
+      <div class="back" style="margin-top:10px" data-goto="home">⟵ Torna alla Home</div>
+    </section>
+
+  </main>
+</body>
+
+</html>
